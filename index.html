@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang=”pl”>
+<head>
+<style>
+
+.widget {
+    user-select: none;
+	-moz-user-select:none;
+    -webkit-user-select:none;
+    -ms-user-select:none;
+	text-align: center;
+	
+	
+}
+</style>
+<meta charset=”utf-8”>
+<title>Twoja strona WWW</title>
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+</head>
+<body>
+<button id = "cos">xxxxxxxxx</button>
+<script>
+var MYAPP = MYAPP || {};
+    
+//funkcja sprawdzająca nazwy	
+MYAPP.namespace = function (ns_string) {
+    var parts = ns_string.split('.'),
+	    parent = MYAPP,
+		i;
+	if (parts[0] === "MYAPP") {
+	    parts = parts.slice(1);
+	}
+    for (i = 0; i < parts.length; i += 1){
+	    if (typeof parent[parts[i]] === "undefined") {
+		    parent[parts[i]] = {};
+			//console.log(parent)
+		}
+		parent = parent[parts[i]]
+	}	
+	return parent;	
+};
+//zmienne
+MYAPP.body = document.getElementsByTagName('body')[0],
+MYAPP.body1 = document;
+//
+MYAPP.namespace('newWindow');
+MYAPP.namespace('utilities.createWindow');
+MYAPP.namespace('utilities.downMouse');
+MYAPP.namespace('utilities.downUP');
+MYAPP.namespace('utilities.move');
+MYAPP.namespace('utilities.checkName');
+MYAPP.namespace('utilities.setPos');
+MYAPP.namespace('utilities.dblClick');
+MYAPP.namespace('utilities.dblClick');
+
+MYAPP.newWindow = function (name, width, height) {
+    var parent = MYAPP.newWindow,
+	    width = width || 250,
+		height = height || 300;
+	parent[name] = {
+	    id: name,
+		position: 'absolute',
+		zIndex: 999,
+		left: 0,
+		top: 0,
+		width: width,
+		height: height,
+		posX: 0,
+		posY: 0,
+		cursor: '',
+	};
+	parent = parent[name];
+	return parent;
+};
+
+MYAPP.utilities.createWindow = function (name) {
+    var parent = MYAPP.newWindow,
+	    txt,
+		text = name;
+	
+	parent = parent[name];
+	if (typeof parent === "undefined"){
+	    MYAPP.newWindow(name)
+	}
+	parent = MYAPP.newWindow;
+	parent = parent[name];
+	name = document.createElement('div')
+	name.id = parent.id;
+	name.style.position = parent.position;
+	name.style.width = parent.width + 'px';
+	name.style.height = parent.height + 'px';
+	name.style.boxShadow =' 0 2px 2px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)';
+	name.style.backgroundColor = 'white';
+	name.className = 'widget';
+	name.style.zIndex = 0;
+	name.style.border = '1px solid #dcd4d4';
+	name.style.borderRadius = '2px';
+	name.style.top = '50px'
+	
+	
+	txt = document.createElement('h1');
+	txt.innerHTML = text;
+	name.appendChild(txt);
+	
+	document.getElementsByTagName('body')[0].appendChild(name)
+}
+
+MYAPP.utilities.checkName = function () {
+    var parent = MYAPP.newWindow,
+		arr = [];
+		for (i in parent){
+		    arr.push(i);
+		};
+	return arr;	
+};
+MYAPP.utilities.setPos = function () {
+console.log(MYAPP)
+    var x = 100,
+	    y = 50,
+		s = 15,
+		a, b, arr, c,
+		i, w, h,
+		parent = MYAPP.newWindow,
+		body = document.getElementById('cos'),
+		name;
+		widget = document.querySelectorAll('.widget'),
+		max = widget.length;
+		
+	arr = MYAPP.utilities.checkName();
+	console.log(arr)
+	MYAPP.body.addEventListener('dblclick', MYAPP.utilities.dblClick);
+	MYAPP.body.addEventListener('mousedown', MYAPP.utilities.downMouse);
+	body.addEventListener('click', MYAPP.utilities.setPos);
+	b = 0; c = 0;
+	w = 250;
+	//console.log(w)
+	for (i = 0; i < max; i++){
+	    //w = widget[i].style.width.slice(0,-2);
+		//h = widget[i].style.height.slice(0,-2);
+	    a = x + (w + s) * c;
+		widget[i].style.left = a + 'px'; 
+		widget[i].style.top = y + ((300 + s) * b)  + 'px'; 
+		if (window.innerWidth < a + 350){
+		b++;
+		    widget[i].style.left = x + 'px';
+			widget[i].style.top = y + ((300 + s) * b) + 'px';
+			a = 0; c = 0;
+		}
+		c++;
+		
+	};
+	for (i = 0; i < max; i++) {
+	   
+	    parent[widget[i].id].left = parseInt(widget[i].style.left.slice(0,-2));
+	    parent[widget[i].id].top = parseInt(widget[i].style.top.slice(0,-2));
+	};
+	return ;
+};
+MYAPP.utilities.move = function (e) {
+
+	var x,
+	    y,
+		w,
+		h,
+		parent = MYAPP.newWindow,
+		body,
+		name;
+		
+	name = e.target.id;
+	body = document.getElementById(name);
+	
+	x = e.clientX;
+    y = e.clientY;
+	w = e.target.clientWidth;
+	h = e.target.clientHeight;
+	parent = parent[name];
+	w1 = parent.posX;
+	h1 = parent.posY;
+	parent.cursor = 'all-scroll';	
+	body.style.cursor = parent.cursor;
+	body.addEventListener('mouseup', MYAPP.utilities.upMouse);
+	body.style.left = x - w1 + 'px';
+	body.style.top = y - h1 +'px';
+	body.addEventListener('mouseout', MYAPP.utilities.upMouse);
+	body.removeEventListener('mousedown', MYAPP.utilities.downMouse);
+	
+	
+	
+	//console.log(w, e.offsetX)
+    return {};	
+};
+MYAPP.utilities.upMouse = function (e) {
+	var x,
+	    y,
+		parent = MYAPP.newWindow,
+		parentR = MYAPP.newWindow,
+		body,
+		name,
+		arr, arr1,
+		max, oldTop, oldLeft,
+		i,c;
+		
+		name = e.target.id;
+		parent = parent[name];
+		parent.cursor = '';
+		//console.log(name);
+		body = document.getElementById(name);
+		oldLeft = parent.left;
+		oldTop = parent.top;
+		body.style.cursor = parent.cursor;
+		parent.top = parseInt(body.style.top.slice(0,-2));
+		parent.left = parseInt(body.style.left.slice(0,-2));
+		console.log('xx')
+		body.removeEventListener('mousemove', MYAPP.utilities.move);
+		body.removeEventListener('mouseup', MYAPP.utilities.upMouse);
+		body.removeEventListener('mouseout', MYAPP.utilities.upMouse);
+		body.style.zIndex = 1;
+		arr = MYAPP.utilities.checkName();
+		arr1 = [];
+		c = arr.indexOf(name);
+		max = arr.length;
+		//console.log('oldL: ' +oldLeft + ' oldTop: ' +oldTop);
+		for(i = 0; i < max; i++){
+		    if (i !== c) {
+			    arr1.push(arr[i])
+			}
+		};
+		//oldLeft = parent.left;
+		//oldTop = parent.top;		
+		console.log(arr1);
+		
+		if (parent.top < 50){
+		   $( body ).animate({
+                    left: oldLeft,
+                 	top: oldTop
+                    }, 500, function() {
+   
+                });
+		};
+		if (parent.left < 100){
+		    $( body ).animate({
+                    left: oldLeft,
+                 	top: oldTop
+                    }, 500, function() {
+   
+                });
+		};
+		parent.top = parseInt(body.style.top.slice(0,-2));
+		parent.left = parseInt(body.style.left.slice(0,-2));
+		max = arr1.length;
+		for (i = 0; i < max; i++){
+		    if (((parent.left >= parentR[arr1[i]].left && parent.left <= parentR[arr1[i]].left + 250) || (parent.left + 250 >= parentR[arr1[i]].left && parent.left + 250 <= parentR[arr1[i]].left + 250)) &&
+                ((parent.top >= parentR[arr1[i]].top && parent.top <= parentR[arr1[i]].top + 300) || (parent.top + 300 >= parentR[arr1[i]].top && parent.top + 300 <= parentR[arr1[i]].top + 300)))
+			{
+			    //body.style.left = oldLeft + 'px';
+				$( body ).animate({
+                    left: oldLeft,
+                 	top: oldTop
+                    }, 200, function() {
+   
+                });
+				
+				//body.style.top = oldTop + 'px';
+				console.log('POZA ZAKRESEM ParentR.L ' + parentR[arr1[i]].left+ ' Paren.L '+oldLeft);
+				parent.top = parseInt(body.style.top.slice(0,-2));
+		        parent.left = parseInt(body.style.left.slice(0,-2));
+			}
+			//if ((parent.top >= parentR[arr1[i]].top && parent.top <= parentR[arr1[i]].top + 300) || (parent.top + 300 >= parentR[arr1[i]].top && parent.top + 300 <= parentR[arr1[i]].top + 300)) {
+			//   body.style.top = oldTop + 'px';
+			//	console.log('POZA ZAKRESEM ParentR.L ' + parentR[arr1[i]].left+ ' Paren.L '+oldLeft);
+			//	parent.top = parseInt(body.style.top.slice(0,-2));
+		    //   parent.left = parseInt(body.style.left.slice(0,-2));
+			//};
+			
+		};
+		
+		console.log('uppp')
+		
+    return {};	
+};
+MYAPP.utilities.dblClick = function(e) {
+    var parent = MYAPP.newWindow,
+	    name = e.target.id,
+	    parent = parent[name],
+		a, l, h, inter, step, inter1,
+		body = document.getElementById(name);
+		//body.style.width = '600px';
+		body.style.zIndex = 999;
+		h = parent.top;
+		l = parent.left;
+		back = document.createElement('div')
+	    back.id = 'back';
+	    back.style.position = 'fixed';
+	    back.style.width = innerWidth + 'px';
+	    back.style.height = innerHeight + 'px';
+		step = (innerHeight)/(innerWidth);
+		name = '#'+name;
+		back.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+		$( back ).animate({
+		    opacity: 0.4,     
+		}, 200, function() {
+   
+        });
+		$( name ).animate({
+           //opacity: 0.1,
+            left: innerWidth/3,
+            width: "600px",
+	        top: innerHeight/3
+            }, 100, function() {
+   
+        });
+
+		
+	    //name.style.boxShadow =' 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)';
+	    
+	    //name.className = 'widget';
+	    back.style.zIndex = 998;
+	    //name.style.border = '1px solid #dcd4d4';
+	    //name.style.borderRadius = '8px';
+	    //name.style.top = '50px'
+		MYAPP.body.appendChild(back);
+		
+		MYAPP.body.removeEventListener('mousedown', MYAPP.utilities.downMouse);
+		body.removeEventListener('click', MYAPP.utilities.upMouse);
+		MYAPP.body.removeEventListener('dblclick', MYAPP.utilities.dblClick);
+		//back.removeEventListener('dblClick', MYAPP.utilities.dblClick);
+		MYAPP.body.addEventListener('dblClick', MYAPP.utilities.xxx);
+		//body.removeEventListener('dblClick', MYAPP.utilities.xxx);
+		console.log('dbclick')
+		
+}; 
+MYAPP.utilities.downMouse = function (e) {
+	var x,
+	    y,
+		i,
+		parent = MYAPP.newWindow,
+		body,
+		name;
+		widget = document.querySelectorAll('.widget'),
+		max = widget.length;
+		
+	name = e.target.id;
+	parent = parent[name];
+	//console.log(parent);
+	body = document.getElementById(name);
+	
+	parent.posX = e.offsetX;
+	parent.posY = e.offsetY;
+	parent.top = parseInt(body.style.top.slice(0,-2));
+	parent.left = parseInt(body.style.left.slice(0,-2));
+	for (i = 0; i < max; i++){
+	    widget[i].style.zIndex = 0; 
+	}	
+	body = document.getElementById(name);
+	body.style.zIndex = '999';
+	x = e.clientX;
+    y = e.clientY;
+	parent.cursor = 'all-scroll';	
+	body.style.cursor = parent.cursor;	
+	e.preventDefault();
+    e.stopPropagation();
+	body.addEventListener('click', MYAPP.utilities.xxx);
+	body.addEventListener('mousemove', MYAPP.utilities.move);
+	
+	console.log('down')
+    return {};	
+};
+MYAPP.utilities.xxx = function (e) {
+name = e.target.id;
+body = document.getElementById(name);
+    body.removeEventListener('mousemove', MYAPP.utilities.move);
+    body.removeEventListener('mouseup', MYAPP.utilities.upMouse);
+	body.removeEventListener('mouseout', MYAPP.utilities.upMouse);
+	console.log('xx')
+}
+
+//MYAPP.newWindow('test');
+MYAPP.utilities.createWindow('test1');
+MYAPP.utilities.createWindow('test');
+MYAPP.utilities.createWindow('XXX');
+MYAPP.utilities.createWindow('1');
+MYAPP.utilities.createWindow('2');
+MYAPP.utilities.createWindow('3');
+MYAPP.utilities.createWindow('11');
+MYAPP.utilities.createWindow('21');
+MYAPP.utilities.createWindow('31');
+
+
+MYAPP.utilities.setPos();
+
+
+console.log(MYAPP);
+//document.addEventListener("click", console.log, false);
+
+</script>
+</body>
+</html>
